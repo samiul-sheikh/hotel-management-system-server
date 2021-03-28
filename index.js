@@ -40,24 +40,30 @@ client.connect(err => {
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
             const idToken = bearer.split(' ')[1];
-            console.log({ idToken });
+            // console.log({ idToken });
             admin
                 .auth()
                 .verifyIdToken(idToken)
                 .then((decodedToken) => {
                     const tokenEmail = decodedToken.email;
                     const queryEmail = req.query.email;
-                    console.log(tokenEmail, queryEmail);
-                    if (tokenEmail == req.query.email) {
-                        bookings.find({ email: req.query.email })
+                    // console.log(tokenEmail, queryEmail);
+                    if (tokenEmail == queryEmail) {
+                        bookings.find({ email: queryEmail })
                             .toArray((err, documents) => {
-                                res.send(documents);
+                                res.status(200).send(documents);
                             })
+                    }
+                    else {
+                        res.status(401).send('unauthorized access');
                     }
                 })
                 .catch((error) => {
-                    // Handle error
+                    res.status(401).send('unauthorized access');
                 });
+        }
+        else {
+            res.status(401).send('unauthorized access');
         }
     })
 });
