@@ -2,7 +2,12 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const admin = require('firebase-admin');
+const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config()
+// console.log(process.env.DB_USER)
+// console.log(process.env.DB_PASS)
 
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2uohe.mongodb.net/burjAlArab?retryWrites=true&w=majority`;
 const port = 8000;
 
 const app = express()
@@ -10,14 +15,13 @@ const app = express()
 app.use(cors());
 app.use(bodyParser.json());
 
-var serviceAccount = require("./hotel-management-burj-firebase-adminsdk-1p4rq-0b11d75391.json");
+var serviceAccount = require("./configs/hotel-management-burj-firebase-adminsdk-1p4rq-0b11d75391.json");
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIRE_DB
 });
 
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://burjAdmin:burjAdmin71@cluster0.2uohe.mongodb.net/burjAlArab?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const bookings = client.db("burjAlArab").collection("bookings");
@@ -69,7 +73,7 @@ client.connect(err => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Welcome To Hotel Management System Server!')
 })
 
 app.listen(port)
