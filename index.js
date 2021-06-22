@@ -76,4 +76,4 @@ app.get('/', (req, res) => {
     res.send('Welcome To Hotel Management System Server!')
 })
 
-app.listen(port)
+app.listen(process.env.PORT || port)
